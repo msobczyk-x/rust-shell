@@ -1,11 +1,10 @@
-use colored::*;
-use std::env;
-use std::path::Path;
+use std::{env, path::Path};
+use std::iter::Peekable;
 
-pub fn change_directory<'a>(mut args: impl Iterator<Item = &'a str>) {
-    let new_dir = args.next().unwrap_or("/");
+pub fn change_directory<'a>(args: &mut Peekable<impl Iterator<Item = &'a str>>) {
+    let new_dir = args.peek().map_or("/", |x| *x); // Default to '/' if no argument
     let root = Path::new(new_dir);
     if let Err(e) = env::set_current_dir(&root) {
-        eprintln!("{}", format!("Failed to change directory: {}", e).red());
+        eprintln!("Failed to change directory: {}", e);
     }
 }
